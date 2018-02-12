@@ -1,0 +1,83 @@
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema;
+
+
+/**
+ * Article Schema
+ */
+var GroupSchema = new Schema(
+{
+
+  siteid: 
+  {
+    type: String,
+    required: true
+  },
+  name: 
+  {
+    type: String,
+    required: true
+  },
+  created: {
+    type: Date,
+    default: Date.now
+  },  
+  updated: 
+  {
+   type: Array
+  },
+  forms: {
+    type: Array
+  },
+  emails: {
+    type: Array
+  },
+  landingpages: {
+    type: Array
+  },
+  campaigns: {
+    type: Array
+  },
+  segments: {
+    type: Array
+  },
+  programs: {
+    type: Array
+  },
+  lists: {
+    type: Array
+  },
+  filters: {
+    type: Array
+  }
+
+});
+
+/**
+ * Validations
+ */
+GroupSchema.path('siteid').validate(function(siteid) 
+{
+  return !!siteid;
+}, 'Title cannot be blank');
+
+GroupSchema.path('name').validate(function(name) 
+{
+  return !!name;
+}, 'Content cannot be blank');
+
+GroupSchema.statics.load = function(id, cb) 
+{
+  this.findOne(
+  {
+    _id: id
+  }).populate('user', 'name username').exec(cb);
+};
+
+
+mongoose.model('Group', GroupSchema);

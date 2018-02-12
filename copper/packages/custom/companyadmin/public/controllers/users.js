@@ -1,0 +1,159 @@
+'use strict';
+
+angular.module('mean.companyadmin').controller('CompanyUsersController', ['$scope', 'Global', 'Menus', 'MeanUser', '$rootScope', '$http', 'CompanyUsers', 'Circles',
+    function($scope, Global, Menus, MeanUser, $rootScope, $http, CompanyUsers, Circles) 
+    {
+        $scope.global = Global;
+        $scope.user = {};
+
+        $scope.userCompanies = [];
+        $scope.userCompanyRoles = [];
+
+        Circles.mineCompany({company: MeanUser.company.id}, function(acl) 
+        {
+            var circles = acl.allowed;
+
+            $scope.userSchema = 
+            [
+            {
+                title: 'Email',
+                schemaKey: 'email',
+                type: 'email',
+                inTable: true
+            },   
+            {
+                title: 'First Name',
+                schemaKey: 'firstname',
+                type: 'text',
+                inTable: true
+            },
+            {
+                title: 'Last Name',
+                schemaKey: 'lastname',
+                type: 'text',
+                inTable: true
+            },
+            {
+                title: 'Companies Roles',
+                schemaKey: 'companies',
+                type: 'array',
+                inTable: true,
+                elements: 
+                [
+                    {
+                        title: 'Roles',
+                        schemaKey: 'roles',
+                        type: 'roles',
+                        options: circles,
+                        inTable: true
+                    }
+                ]
+            }, 
+            {
+                title: 'Username',
+                schemaKey: 'username',
+                type: 'text',
+                inTable: true
+            }, 
+            {
+                title: 'Password',
+                schemaKey: 'password',
+                type: 'password',
+                inTable: false
+            }, 
+            {
+                title: 'Repeat password',
+                schemaKey: 'confirmPassword',
+                type: 'password',
+                inTable: false
+            }];
+        });
+
+
+
+        $scope.init = function() 
+        {
+            CompanyUsers.query({company: MeanUser.company.id}, function(users) 
+            {
+                $scope.users = users;
+
+                for(var i = 0; i < users.length; i++)
+                {   
+                    $scope.userCompanies[i] = [];
+                    $scope.userCompanyRoles[i] = [];
+                    for(var j = 0; j < users[i].companies.length; j++)
+                    {
+                    //    $scope.userCompanies[i] = {};
+                   
+                        $scope.userCompanies[i][j] = users[i].companies[j].id;
+                        //$scope.userCompanies[i].name = users[i].companies[j].name;
+                        $scope.userCompanyRoles[i][j] = users[i].companies[j].roles;
+                    }
+                }
+            });
+        };
+
+        $scope.add = function(valid) {
+            if (!valid) return;
+            if (!$scope.users) $scope.users = [];
+
+            var user = new CompanyUsers({
+                company: MeanUser.company.id,
+                email: $scope.user.email,
+                firstname: $scope.user.firstname,
+                lastname: $scope.user.lastname,
+                username: $scope.user.username,
+                password: $scope.user.password,
+                confirmPassword: $scope.user.confirmPassword,
+                companyRoles: $scope.user.companies[0].roles
+            });
+
+            user.$save(function(data, headers) {
+                $scope.users.push(user);
+                $scope.userCompanyRoles.push($scope.user.companies[0].roles)
+                $scope.user = {};
+                $scope.userError = null;
+            }, function(data, headers) {
+                $scope.userError = data.data;
+            });
+        };
+
+        $scope.remove = function(user) {
+            for (var i in $scope.users) {
+                if ($scope.users[i] === user) {
+                    $scope.users.splice(i, 1);
+                }
+            }
+
+            user.$remove();
+        };
+
+        $scope.update = function(user, userField) 
+        {
+            for(var i = 0; i < $scope.users.length; i++)
+            {   
+                for(var j = 0; j < $scope.users[i].companies.length; j++)
+                {
+                    $scope.users[i].companies[j].id =  $scope.userCompanies[i][j];
+                  
+                    $scope.users[i].companies[j].roles = $scope.userCompanyRoles[i][j];
+                }
+            }
+
+            if (userField && userField === 'roles' && user.tmpRoles.indexOf('admin') !== -1 && user.roles.indexOf('admin') === -1) {
+                if (confirm('Are you sure you want to remove "admin" role?')) {
+                    user.$update();
+                } else {
+                    user.roles = user.tmpRoles;
+                }
+            } else
+                user.$update();
+        };
+
+        $scope.beforeSelect = function(userField, user) {
+            if (userField === 'roles') {
+                user.tmpRoles = user.roles;
+            }
+        };
+    }
+]);

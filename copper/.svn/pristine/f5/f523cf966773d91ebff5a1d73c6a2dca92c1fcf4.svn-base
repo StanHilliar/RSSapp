@@ -1,0 +1,57 @@
+'use strict';
+
+//Setting up route
+angular.module('mean.groups').config(['$stateProvider',
+  function($stateProvider) 
+  {
+
+    // states for my app
+    $stateProvider
+      .state('all groups', 
+      {
+        url: '/groups?assetType&asset&site&siteid&userid',
+        templateUrl: '/groups/views/list.html',
+        resolve: 
+        {
+          loggedin: function(MeanUser) 
+          {
+            return MeanUser.checkLoggedin();
+          }
+        }
+      })
+      .state('create group', {
+        url: '/groups/create',
+        templateUrl: '/groups/views/create.html',
+        resolve: 
+        {
+          loggedin: function(MeanUser) 
+          {
+            return MeanUser.checkLoggedin();
+          }
+        }
+      })
+      .state('edit group', {
+        url: '/groups/:groupId/edit',
+        templateUrl: '/groups/views/edit.html',
+        resolve: 
+        {
+          loggedin: function(MeanUser) 
+          {
+            return MeanUser.checkLoggedin();
+          }
+        }
+      })
+      .state('group by id', 
+      {
+        url: '/groups/:groupId',
+        templateUrl: '/groups/views/view.html',
+        resolve: 
+        {
+          loggedin: function(MeanUser) 
+          {
+            return MeanUser.checkLoggedin();
+          }
+        }
+      });
+  }
+]);

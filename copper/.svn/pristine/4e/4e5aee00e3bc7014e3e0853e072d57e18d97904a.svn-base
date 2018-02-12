@@ -1,0 +1,78 @@
+<section data-ng-controller="GroupsController" data-ng-init="findOne()">
+  <div>VIEW</div>
+  <span>{{group.created | date:'medium'}}</span> /
+
+  <span>{{group.user.name}}</span>
+  <h2>{{group.name}}</h2>
+  <div data-ng-if="hasAuthorization(group)">
+    <a class="btn" href="/articles/{{group._id}}/edit">
+      <i class="glyphicon glyphicon-edit"></i>
+    </a>
+    <a class="btn" data-ng-click="remove(group);">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+  </div>
+  <div>
+    forms
+    <ul>
+      <li data-ng-repeat="form in group.forms">
+         <span>{{form.id}}</span>
+         <span>{{form.name}}</span>
+      </li>
+    </ul>
+  </div>
+   <div>
+    emails
+    <ul>
+      <li data-ng-repeat="email in group.emails">
+         <span>{{email.id}}</span>
+         <span>{{email.name}}</span>
+      </li>
+    </ul>
+  </div>
+   <div>
+    landingpages
+    <ul>
+      <li data-ng-repeat="landingpage in group.landingpages">
+         <span>{{landingpage.id}}</span>
+         <span>{{landingpage.name}}</span>
+      </li>
+    </ul>
+  </div>
+   <div>
+    campaigns
+    <ul>
+      <li data-ng-repeat="campaign in group.campaigns">
+         <span>{{campaign.id}}</span>
+         <span>{{campaign.name}}</span>
+      </li>
+    </ul>
+  </div>
+   <div>
+    segments
+    <ul>
+      <li data-ng-repeat="segment in group.segments">
+         <span>{{segment.id}}</span>
+         <span>{{segment.name}}</span>
+      </li>
+    </ul>
+  </div>
+   <div>
+    lists
+    <ul>
+      <li data-ng-repeat="list in group.lists">
+         <span>{{list.id}}</span>
+         <span>{{list.name}}</span>
+      </li>
+    </ul>
+  </div>  <div>
+    filters
+    <ul>
+      <li data-ng-repeat="filter in group.filters">
+         <span>{{filter.id}}</span>
+         <span>{{filter.name}}</span>
+      </li>
+    </ul>
+  </div>
+  <div>{{group.content}}</div>
+</section>

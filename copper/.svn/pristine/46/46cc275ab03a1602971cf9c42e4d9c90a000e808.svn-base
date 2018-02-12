@@ -1,0 +1,164 @@
+'use strict';
+
+angular.module('mean.groups').controller('GroupsController', ['$scope', '$stateParams', '$location', 'Global', 'Groups', 'MeanUser',  function($scope, $stateParams, $location, Global, Groups, MeanUser) 
+{
+    $scope.global = Global;
+    $scope.hasAuthorization = function(group) 
+    {
+      if (!group || !group.user) return false;
+      return MeanUser.isAdmin || group.user._id === MeanUser.user._id;
+    };
+
+    console.log('------ stateParams ----------');
+    console.dir($stateParams);
+    $scope.elq = {};
+    $scope.elq.assetType = $stateParams.assetType;
+    $scope.elq.asset = $stateParams.asset;
+    $scope.elq.site = $stateParams.site;
+    $scope.elq.siteid = $stateParams.siteid;
+    $scope.elq.userid = $stateParams.userid;
+
+    $scope.create = function(isValid) 
+    {
+      if (isValid) 
+      {
+        var group = new Groups(
+        {
+          siteid: this.siteid,
+          name: this.name
+        });
+
+        group.$save(function(response) 
+        {
+          $location.path('groups/' + response._id);
+        });
+
+        this.siteid = '';
+        this.name = '';
+      } 
+      else 
+      {
+        $scope.submitted = true;
+      }
+    };
+
+    $scope.remove = function(group) 
+    {
+      if (group) 
+      {
+        group.$remove(function(response) 
+        {
+          for (var i in $scope.groups) 
+          {
+            if ($scope.groups[i] === group) 
+            {
+	           $scope.groups.splice(i,1);
+            }
+          }
+          $location.path('groups');
+        });
+
+      } 
+      else 
+      {
+        $scope.group.$remove(function(response) 
+        {
+          $location.path('groups');
+        });
+      }
+    };
+
+    $scope.update = function(isValid) 
+    {
+      if (isValid) 
+      {
+        var group = $scope.group;
+        if(!group.updated) 
+        {
+          group.updated = [];
+	      }
+
+        group.updated.push(new Date().getTime());
+
+        group.$update(function() 
+        {
+          $location.path('groups/' + group._id);
+        });
+      } 
+      else 
+      {
+        $scope.submitted = true;
+      }
+    };
+
+    $scope.addAsset = function(group1) 
+    {
+      var group = group1;
+
+      if(!group.updated) 
+      {
+        group.updated = [];
+      }
+
+      group.updated.push(new Date().getTime());
+
+      if( $scope.elq.assetType == 'form')
+      {
+        if(!group.forms) 
+        {
+          group.forms = [];
+        }
+
+        group.forms.push({id: $scope.elq.asset, name: ''});
+      }
+     
+
+      group.$update(function() 
+      {
+        //ToDO display an done text
+        //$location.path('groups/' + group._id);
+      });
+    };
+
+    $scope.find = function() 
+    {
+      Groups.query(function(groups) 
+      {
+        $scope.groups = groups;
+      });
+    };
+
+    $scope.contains = function(group) 
+    {
+      console.log('contains '+group.name);
+     
+      var returnme = false;
+
+      if($scope.elq.assetType == 'form')
+      {
+       console.log('isForm');
+        for(var i = 0; i < group.forms.length; i++)
+        {
+          console.log(group.forms[i].id+ " == "+$scope.elq.asset);
+          if(group.forms[i].id == $scope.elq.asset)
+          {
+            returnme = true;
+          }
+        }
+      }
+
+      group.containsAsset = returnme;
+    };
+
+    $scope.findOne = function() 
+    {
+      Groups.get(
+      {
+        groupId: $stateParams.groupId
+      }, function(group) 
+      {
+        $scope.group = group;
+      });
+    };
+  }
+]);

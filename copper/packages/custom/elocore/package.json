@@ -1,0 +1,16 @@
+{
+  "name": "elocore",
+  "version": "0.0.1",
+  "description": "Some description of elocore",
+  "author": {
+    "name": "Simon Eckhardt"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "mean": "0.4.3",
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.4.x"
+  },
+  "dependencies": {},
+  "license": "MIT"
+}

@@ -1,0 +1,28 @@
+<div class="" data-ng-controller="EloquaAccountsController" ng-init="loadAccounts()">
+ <h2>Accounts</h2>
+
+ <div>exisiting accounts:</div>
+ <br/>
+ basic Accounts:
+ <div ng-repeat="user in myAccounts.users">
+   {{user.company}}  {{user.username}}    <button type="button" class="btn btn-default btn-xs">remove</button> <br/>
+ </div>
+
+ <br/>
+ <br/>
+
+ API Accounts:
+ <div >
+   TODO
+ </div>
+
+ <br/>
+ <br/>
+
+
+ <button class="btn btn-primary btn-sm" ng-click="gotoAddNew()">add new account</button>
+ <button class="btn btn-primary btn-sm" ng-click="addNewApiAccount()">add new API account</button>
+ <a href="/api/accounts/auth/eloqua"> add new API ACOUNT</a>
+
+
+</div>

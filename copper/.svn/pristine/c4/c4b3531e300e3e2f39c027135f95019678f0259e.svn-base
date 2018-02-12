@@ -1,0 +1,16 @@
+<div class="" data-ng-controller="EloquaLandingpagesController" ng-init="loadLandingPages()">
+ <h2>Landingpages for {{company}}</h2>
+
+ <br/>
+ <br/>
+
+ API Accounts:
+ <div ng-repeat="landingpage in myelements.elements">
+     {{landingpage.id}} {{landingpage.name}} {{landingpage.createdAt * 1000| date:'dd.MM.yyyy HH:mm Z'}}  {{landingpage.currentStatus}} <br/>
+ </div>
+
+ <br/>
+ <br/>
+
+
+</div>

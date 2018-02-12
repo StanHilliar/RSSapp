@@ -1,0 +1,142 @@
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+  Group = mongoose.model('Group'),
+  _ = require('lodash');
+
+module.exports = function(Groups) {
+
+    return {
+        /**
+        * Find group by id
+        */
+        group: function(req, res, next, id) 
+        {
+            Group.load(id, function(err, group) 
+            {
+                if (err) return next(err);
+                if (!group) return next(new Error('Failed to load group' + id));
+                req.group= group;
+                next();
+            });
+        },
+        /**
+        * Create an group
+
+        */
+        create: function(req, res) 
+        {
+            var group = new Group(req.body);
+            group.user = req.user;
+
+            group.save(function(err) 
+            {
+                if (err) 
+                {
+                  return res.status(500).json(
+                  {
+                    error: 'Cannot save the group'
+                  });
+                }
+
+                Groups.events.publish('create', 
+                {
+                    description: req.user.name + ' created ' + req.body.title + ' group.'
+                });
+
+                res.json(group);
+            });
+        },
+
+        /**
+        * Update an group
+        */
+        update: function(req, res) 
+        {
+            var group = req.group;
+
+            group = _.extend(group, req.body);
+
+            group.save(function(err) 
+            {
+                if (err) 
+                {
+                    return res.status(500).json(
+                    {
+                        error: 'Cannot update the group'
+                    });
+                }
+
+                Groups.events.publish('update', 
+                {
+                    description: req.user.name + ' updated ' + req.body.title + ' group.'
+                });
+
+                res.json(group);
+            });
+        },
+
+        /**
+        * Delete an group
+        */
+        destroy: function(req, res) 
+        {
+            var group = req.group;
+
+            group.remove(function(err) 
+            {
+                if (err) 
+                {
+                    return res.status(500).json(
+                    {
+                        error: 'Cannot delete the group'
+                    });
+                }
+
+                Groups.events.publish('remove', 
+                {
+                    description: req.user.name + ' deleted ' + group.title + ' group.'
+                });
+
+                res.json(group);
+            });
+        },
+
+        /**
+        * Show an group
+
+        */
+        show: function(req, res) 
+        {
+            Groups.events.publish('view', 
+            {
+                description: req.user.name + ' read ' + req.group.title + ' group.'
+            });
+
+            res.json(req.group);
+        },
+
+        /**
+        * List of Groups
+
+        */
+        all: function(req, res) 
+        {
+            Group.find().sort('-created').populate('user', 'name username').exec(function(err, groups) 
+            {
+                if (err) 
+                {
+                    return res.status(500).json(
+                    {
+                        error: 'Cannot list the groups'
+                    });
+                }
+
+                res.json(groups);
+            });
+        }
+    };
+}

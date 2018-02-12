@@ -1,0 +1,17 @@
+<div class="" data-ng-controller="CirclesController">
+  <h1>Manage Circles Package</h1>
+  <ol>
+    <li data-ng-repeat="circle in circles">
+      {{circle.name}} <br>
+        parents 
+      <span class="editable-span" data-ng-editable-select="update(circle)" data-ng-editable-select-model="circle.parents" data-ng-editable-select-options="availableCircles"></span>
+      <br>
+      containers {{circle.containers}}<br>
+      decendants {{circle.decendants}}<br>
+      children {{circle.children}}<br>
+    </li> 
+    
+  </ol>
+  
+</div>
+

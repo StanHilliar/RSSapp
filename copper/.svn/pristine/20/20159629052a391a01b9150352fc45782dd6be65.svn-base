@@ -1,0 +1,85 @@
+<div class="" data-ng-controller="ContactController">
+
+  
+  	<form>
+
+  	<select id="disabledSelect" class="form-control" ng-options="view as view.name for view in contactviews.elements" ng-model="selectedView" ng-change="viewupdate()">
+    </select>	
+    <h2>User: {{contactfields.name}}</h2>
+<!--
+    <div ng-repeat="fields in selectedView.fields">
+    	<label for="disabledTextInput">{{fields.name}}</label>
+      	<input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+    </div>
+    -->
+ 	<fieldset disabled>
+ 	<div class="row">
+    <div ng-repeat="(key, value) in contactfields" class="col-md-6">
+    	<label for="disabledTe-xtInput">{{key}}</label>
+      	<input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input" value="{{value}}">
+    </div>
+    </div>
+	<!--
+  <fieldset disabled>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="form-group">
+      			<label for="disabledTextInput">Disabled input</label>
+      			<input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+    		</div>
+    	</div>
+  		<div class="col-md-6">
+  			<div class="form-group">
+      			<label for="disabledSelect">Disabled select menu</label>
+      			<select id="disabledSelect" class="form-control">
+        			<option>Disabled select</option>
+      			</select>
+    		</div>
+    	</div>
+	</div>-->
+
+	<!--
+	{{contactfields.accountName}}
+	{{contactfields.businessPhone}}
+	{{contactfields.city}}
+	{{contactfields.createdAt}}
+	{{contactfields.currentStatus}}
+	{{contactfields.depth}}
+	{{contactfields.emailAddress}}
+	{{contactfields.emailFormatPreference}}
+	{{contactfields.firstName}}
+	{{contactfields.id}}
+	{{contactfields.isBounceback}}
+	{{contactfields.isSubscribed}}
+	{{contactfields.lastName}}
+	{{contactfields.name}}
+	{{contactfields.salesPerson}}
+	{{contactfields.subscriptionDate}}
+	{{contactfields.title}}
+	{{contactfields.type}}
+	{{contactfields.updatedAt}} 
+
+	-->
+
+
+	<div ng-repeat="element in contactfields.fieldValues">
+	{{element.id}}
+	{{element.type}}
+	{{element.value}}
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  </fieldset>
+</form>
+</div>
+ 

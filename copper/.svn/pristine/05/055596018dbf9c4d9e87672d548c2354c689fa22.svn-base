@@ -1,0 +1,83 @@
+'use strict';
+
+/*
+ * Defining the Package
+ */
+var Module = require('meanio').Module;
+var passport = require('passport');
+
+var Eloquaservices = new Module('eloquaservices');
+
+
+/*
+ * All MEAN packages require registration
+ * Dependency injection is used to define required modules
+ */
+Eloquaservices.register(function(app, auth, database) {
+
+  require('./passport')(passport);
+    //We enable routing. By default the Package Object is passed to the routes
+  Eloquaservices.routes(app, auth, database, passport);
+
+    //We are adding a link to the main menu for all authenticated users
+  Eloquaservices.menus.add({
+    title: 'search',
+    link: 'eloqua_services search page',
+    hassubmenu: true,
+    submenu: [
+    {
+        title:'abc'
+    },
+    {
+        title:'def'
+    }
+    ],
+    roles: ['authenticated'],
+    menu: 'main'
+    });
+
+   Eloquaservices.menus.add({
+    title: 'eloqua accounts',
+    link: 'eloqua_services accounts',
+    roles: ['authenticated'],
+    menu: 'main'
+    });
+
+    Eloquaservices.menus.add({
+     title: 'LP',
+     link: '/eloquaservices//:username/landingpages',
+     roles: ['authenticated'],
+     menu: 'main'
+     });
+
+
+    
+
+
+
+  Eloquaservices.aggregateAsset('css', 'eloquaservices.css');
+
+  /**
+    //Uncomment to use. Requires meanio@0.3.7 or above
+    // Save settings with callback
+    // Use this for saving data from administration pages
+    Eloquaservices.settings({
+        'someSetting': 'some value'
+    }, function(err, settings) {
+        //you now have the settings object
+    });
+
+    // Another save settings example this time with no callback
+    // This writes over the last settings.
+    Eloquaservices.settings({
+        'anotherSettings': 'some value'
+    });
+
+    // Get settings. Retrieves latest saved settigns
+    Eloquaservices.settings(function(err, settings) {
+        //you now have the settings object
+    });
+    */
+
+  return Eloquaservices;
+});

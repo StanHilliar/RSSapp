@@ -1,0 +1,276 @@
+/* jshint -W079 */ 
+/* Related to https://github.com/linnovate/mean/issues/898 */
+'use strict';
+
+var crypto = require('crypto');
+
+/**
+ * Create a random hex string of specific length and
+ * @todo consider taking out to a common unit testing javascript helper
+ * @return string
+ */
+function getRandomString(len) {
+  if (!len)
+    len = 16;
+
+  return crypto.randomBytes(Math.ceil(len / 2)).toString('hex');
+}
+
+/**
+ * Module dependencies.
+ */
+
+var expect 	 = require('expect.js');
+var mongoose = require('mongoose');
+var User 	 = mongoose.model('User');
+var Company  = mongoose.model('Company');
+var request  = require('supertest'); 
+var should 	 = require('should');
+
+/**
+ * Globals
+ */
+var company1, company2;
+var user1;
+var url = 'http://127.0.0.1:3001';
+
+/**
+ * Test Suites
+ */
+describe('<Unit Test>', function() 
+{
+  before(function(done) 
+  {
+	  	user1 = 
+	    {
+	        firstname: 'Tom',
+	        lastname: 'Tester',
+	        email: 'test' + getRandomString() + '@test.com',
+	        company: 'testCompany'+getRandomString(),
+	        username: getRandomString(),
+	        password: 'password11',
+	        confirmPassword: 'password11',
+	        provider: 'local'
+	    };
+
+	    company1 = 
+	    {
+	        owner: 'Tom',
+	        name: user1.company,
+	        eloquaAccounts: [],
+	        sfdcAccounts: [],
+	        sfdcAccounts: [],
+	        products: [],
+	        productTrials: [],
+	        users: []
+	    };  
+
+	    company2 = 
+	    {
+	        owner: 'Tom',
+	        name: 'AmazingTestCompany'+getRandomString(),
+	        eloquaAccounts: [],
+	        sfdcAccounts: [],
+	        sfdcAccounts: [],
+	        products: [],
+	        productTrials: [],
+	        users: []
+	    };
+
+		done();
+	});
+
+ 	describe('REST API:', function()
+  {
+    it('registerCompany api', function(done) 
+    {
+      request(url)
+      .post('/api/registerCompany')
+      .send(user1)
+      //.expect(200)
+      .end(function(err, res)
+      {
+        if(err)
+        {
+          throw  err;
+        }
+        if(res.error)
+        {
+          throw res.error;
+        }
+        //console.log("RES::::::::");
+        //console.log(res);
+        expect(res.body.token).to.be.an('string');
+        expect(res.body.redirect).to.be.an('string');
+        expect(res.status).to.eql(200);
+
+        Company.find(
+        {
+          name: user1.company
+        }, function(errCompany, companies)
+        {
+          if(errCompany)
+          {
+            throw  errCompany;
+          }
+
+          //console.log('companies');
+          //console.log(companies);
+          expect(companies.length).to.eql(1);
+          var _company = companies[0];
+          expect(_company.name).to.eql(user1.company);
+          expect(_company.owner).to.eql(user1.email);
+          _company.remove();
+
+          User.find(
+          {
+            email: user1.email
+          }, function(errUser, users) 
+          {
+            if(errUser)
+            {
+              throw  errUser;
+            }
+            //console.log(users);
+            //console.log("length "+users.length);
+            expect(users.length).to.eql(1);
+            var _user = users[0];
+            console.log(_user.companies[0].roles);
+            expect(_user.email).to.eql(user1.email);
+            expect(_user.hasRole('authenticated')).to.eql(true);
+            expect(_user.companies[0].roles.indexOf('Company_Admin')).not.to.eql(-1);
+            expect(_user.companies[0].roles.indexOf(company1.name)).not.to.eql(-1);
+            _user.remove();
+      
+            done();
+          });
+        });
+      });
+	  });
+  });
+
+	describe('Model Company:', function() 
+	{
+		describe('Method Save', function() 
+		{
+			it('should begin without the test user', function(done) 
+		  	{
+		        Company.find(
+		        {
+		          name: company1.name
+		        }, function(err, companies) 
+		        {
+		      		expect(companies.length).to.equal(0);
+
+			        Company.find(
+			        {
+			        	name: company2.name
+			        }, function(err, companies) 
+			        {
+			        	expect(companies.length).to.equal(0);
+			            done();
+			        });
+		    	});
+		  	});
+
+		  	it('should be able to save without problems', function(done) 
+			{
+				var _company = new Company(company1);
+				_company.save(function(err) 
+				{
+				  expect(err).to.be(null);
+				  _company.remove();
+				  done();
+				});
+			});
+
+			it('should be able to create user and save user for updates without problems', function(done) 
+			{
+				var _company = new Company(company1);
+				_company.save(function(err) 
+				{
+					expect(err).to.be(null);
+
+				  	_company.owner = 'new owner';
+				  	_company.save(function(err) 
+				  	{
+				    	expect(err).to.be(null);
+				    	expect(_company.owner).to.equal('new owner');
+				    	_company.remove(function() 
+				    	{
+				      		done();
+				    	});
+				  	});
+				});
+			});
+
+      it('should fail to save an existing user with the same values', function(done) 
+      {
+        var _company = new Company(company1);
+        _company.save();
+
+        var _company2 = new Company(company1);
+
+        _company2.save(function(err) 
+        {
+          expect(err).to.not.be(null);
+          _company.remove(function() 
+          {
+            if (!err) 
+            {
+              _company2.remove(function() 
+              {
+                done();
+              });
+            }
+            else
+            {
+              done();
+            }
+          });
+        });
+      });
+
+			it('should show an error when try to save without username', function(done) 
+      {
+        var _company = new Company(company1);
+        _company.name = '';
+
+        _company.save(function(err) 
+        {
+          expect(err).to.not.be(null);
+          done();
+        });
+      });
+
+      it('should show an error when try to save without owner', function(done) 
+		  {
+        var _company = new Company(company1);
+        _company.owner = '';
+
+        _company.save(function(err) 
+        {
+          expect(err).to.not.be(null);
+          done();
+        });
+		 	});
+		});
+
+		after(function(done) 
+		{
+
+		  /** Clean up user objects
+		   * un-necessary as they are cleaned up in each test but kept here
+		   * for educational purposes
+		   *
+		   *  var _user1 = new User(user1);
+		   *  var _user2 = new User(user2);
+		   *
+		   *  _user1.remove();
+		   *  _user2.remove();
+		   */
+
+		  done();
+		});
+	});
+});

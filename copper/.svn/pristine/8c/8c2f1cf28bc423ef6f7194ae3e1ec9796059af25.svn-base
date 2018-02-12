@@ -1,0 +1,14 @@
+<section class="welcome container-fluid" data-ng-controller="IndexController">
+  <div class="col-md-12 first">
+    <h1>home</h1>
+    </div>
+    <div class="col-md-12 row">
+    <div class="info col-md-12">
+      <div class="docs">
+        <div class="welcome-sprite"></div>
+        <h3>RSSApp home</h3>
+      </div>
+     
+    </div>
+  </div>
+</section>

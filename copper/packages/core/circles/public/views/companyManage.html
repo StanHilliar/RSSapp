@@ -1,0 +1,90 @@
+<div class="" data-ng-controller="CompanyCirclesController as vm">
+  <h3>Security Settings</h3>
+  <ol>
+    <li data-ng-repeat="circle in circles">
+      <h3>{{circle.name}}</h3>
+     
+      <ol>
+        <li data-ng-repeat="child in circle.children">
+          {{child}} <a href=""> edit </a> <a href=""> delete </a>
+        </li>
+      </ol>
+
+      <br/>
+      <button type="submit" class="btn btn-default" ng-click="vm.addCircle(circle.name)">add new</button>
+      <!--
+      containers {{circle.children}}<br>
+      decendants {{circle.decendants}}<br>
+      children {{circle.children}}<br>-->
+    </li> 
+  </ol>
+  
+  <div class="panel panel-default" ng-show="vm.addingCircle">
+  <div class="panel-heading">
+    <h3 class="panel-title">Create new security circle</h3>
+  </div>
+  <div class="panel-body">
+
+
+  <form name="circleForm" class="form-horizontal col-md-6" role="form" data-ng-submit="vm.createAdvanced(circleForm.$valid)" novalidate>
+  <div class="row">
+    <div class="col-md-12">
+      
+        <label for="title" class="col-md-2 control-label">Name</label>
+        <div class="col-md-10">
+          <input name="name" type="text" class="form-control" data-ng-model="vm.circle.name" id="name" placeholder="Name" required>
+          <input name="name" type="hidden" class="form-control" data-ng-model="vm.circle.circles" id="circles" required>
+          <div ng-show="submitted && circleForm.name.$invalid" class="help-block">
+            <p ng-show="articleForm.title.$error.required">Name is required</p>
+          </div>
+        </div>
+        <br>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+     
+        <label for="children" class="col-md-2 control-label">Circle</label>
+        <div class="col-md-10">
+          <ui-select multiple ng-model="vm.children" theme="bootstrap" ng-disabled="disabled" sortable="true" close-on-select="false" style="width: 330px;">
+            <ui-select-match placeholder="Select circle...">{{$item}} </ui-select-match>
+            <ui-select-choices repeat="circle in vm.availableCompanyProducts | filter:$select.search">
+              <div ng-bind-html="circle | highlight: $select.search"></div>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+     
+    </div>
+  </div>
+  <!--
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label mean-token="'children'" for="children" class="col-md-2 control-label">Children</label>
+        
+           <ui-select multiple ng-model="vm.children">
+              <ui-select-match placeholder="Select circles...">{{$item}}</ui-select-match>
+              <ui-select-choices repeat="circle in vm.availableCompanyProducts | filter:$select.search">
+                {{circle}}
+              </ui-select-choices>
+            </ui-select>
+        
+      </div>
+    </div>
+    </div>-->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <div class="col-md-offset-2 col-md-10">
+            <button mean-token="'edit-submit'" type="submit" class="btn btn-default">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    </form>
+</div>
+
+
+</div>
+

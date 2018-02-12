@@ -1,0 +1,38 @@
+<section data-ng-controller="GroupsController" data-ng-init="find()">
+ <div>{{elq.assetType }}</div>
+ <div>{{elq.asset }}</div>
+ <div>{{elq.site }}</div>
+ <div>{{elq.siteid }}</div>
+ <div>{{elq.userid }}</div>
+ <div>you selected the {{elq.assetType }} with the id {{elq.asset }}</div>
+  <ul class="groups unstyled">
+    <li data-ng-repeat="group in groups" data-ng-init="contains(group)">
+      <span>{{group.created | date:'medium'}}</span> /
+      <span>{{group.user.name}}</span>
+      <h2>
+        <a data-ng-href="/groups/{{group._id}}">{{group.name}}</a>
+        <span data-ng-if="hasAuthorization(group)">
+          <a class="btn" href="/groups/{{group._id}}/edit">
+            <i class="glyphicon glyphicon-edit"></i>
+          </a>
+          <a class="btn" data-ng-click="remove(group);">
+            <i class="glyphicon glyphicon-trash"></i>
+          </a>
+        </span>
+        <span data-ng-if="!group.containsAsset">
+          <a class="btn" ng-click="addAsset(group)">
+            <i class="glyphicon glyphicon-plus"></i>
+          </a>
+        </span>  
+        <span data-ng-if="group.containsAsset">
+          <a class="btn" ng-click="removeAsset(group)">
+            <i class="glyphicon glyphicon-minus"></i>
+          </a>
+        </span>
+
+      </h2>
+      <div>{{group.siteid}}</div>
+    </li>
+  </ul>
+  <h1 data-ng-hide="!groups || groups.length">No groups yet. <br> Why don't you <a href="/groups/create">Create One</a>?</h1>
+</section>

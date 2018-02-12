@@ -1,0 +1,53 @@
+<div class="" data-ng-controller="EloquaservicesController">
+
+ <div class="btn-group" dropdown>
+ <ul class="dropdown-menu" role="menu">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+      </ul>
+</div>
+
+<div class="row">
+  <div class="col-lg-6">
+
+  </div><!-- /.col-lg-6 -->
+  <div class="col-lg-6">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search for..." ng-model="searchText">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="startSearch()">Go!</button>
+      </span>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+</div><!-- /.row -->
+
+    <br/>
+    <progressbar animate="false" value="dynamic" type="success"><b>{{dynamic}}%</b></progressbar>
+    <br/>
+    <br/>
+
+
+		<table class="table table-striped table-hover">
+		<th>#</th>
+		<th>id</th>
+		<th>name</th>
+		<th>emailAddress</th>
+		<th>createdAt</th>
+		<th>updatedAt</th>
+
+		<tr ng-repeat="element in myelements.elements" ng-click="singleClickAction($index)" ng-dblClick="doubleClick()">
+			<td></td>
+			<td>{{element.id}}</td>
+	  		<td>{{element.name}}</td>
+	  		<td>{{element.emailAddress}}</td>
+	  		<td>{{element.createdAt * 1000| date:'dd.MM.yyyy HH:mm Z'}}</td>
+	  		<td>{{element.updatedAt * 1000| date:'dd.MM.yyyy HH:mm Z'}}</td>
+		</tr>
+		</table>
+		<pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" rotate="false" num-pages="numPages" ng-change="pageChanged()"></pagination>
+
+
+</div>

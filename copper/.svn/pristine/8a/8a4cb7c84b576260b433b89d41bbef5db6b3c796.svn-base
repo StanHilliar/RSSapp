@@ -1,0 +1,31 @@
+'use strict';
+
+angular.module('mean.circles').config(['$stateProvider',
+  function($stateProvider) {
+    $stateProvider.state('manage circles', {
+      url: '/circles/manage',
+      templateUrl: 'circles/views/index.html',
+      resolve: {
+        isAdmin: function(MeanUser) {
+          return MeanUser.checkAdmin();
+        }
+      }
+    }).state('manage circles2', {
+      url: '/circles/manage2',
+      templateUrl: 'circles/views/manage.html',
+      resolve: {
+        isAdmin: function(MeanUser) {
+          return MeanUser.checkCompanyAdmin(MeanUser.company.id);
+        }
+      }
+    }).state('create circles', {
+      url: '/circles/create',
+      templateUrl: 'circles/views/createAdvanced.html',
+      resolve: {
+        isAdmin: function(MeanUser) {
+          return MeanUser.checkAdmin();
+        }
+      }
+    });
+  }
+]);

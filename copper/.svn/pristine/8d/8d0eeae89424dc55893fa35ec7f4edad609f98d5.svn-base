@@ -1,0 +1,6 @@
+<div class="" data-ng-controller="EloquaApiAccountsController">
+ <h2>Add Eloqua Account</h2>
+
+ <div>error: {{error}}</div>
+ <div>response: {{response}}}</div>
+</div>

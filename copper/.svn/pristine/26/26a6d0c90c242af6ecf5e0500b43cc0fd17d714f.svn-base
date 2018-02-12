@@ -1,0 +1,10 @@
+.groups-example h1 {
+  background-color: purple
+}
+
+h1 {
+	text-align: center
+}
+ul.groups li:not(:last-child) {
+	border-bottom: 1px solid #ccc
+}

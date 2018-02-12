@@ -1,0 +1,92 @@
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+    crypto    = require('crypto'),
+          _   = require('lodash');
+
+/**
+ * Validations
+ */
+var validatePresenceOf = function(value) {
+  // If you are authenticating by any of the oauth strategies, don't validate.
+  return (this.provider && this.provider !== 'local') || (value && value.length);
+};
+
+var validateUniqueName = function(value, callback) 
+{
+  var Company = mongoose.model('Company');
+  Company.find(
+  {
+    $and: [
+    {
+      name: value
+    }, {
+      _id: {
+        $ne: this._id
+      }
+    }]
+  }, function(err, user) 
+  {
+    callback(err || user.length === 0);
+  });
+};
+
+/**
+ * Getter
+ */
+var escapeProperty = function(value) 
+{
+  return _.escape(value);
+};
+
+/**
+ * User Schema
+ */
+
+var CompanySchema = new Schema({
+  owner: 
+  {
+    type: String,
+    required: true,
+    get: escapeProperty
+  },
+  name: 
+  {
+    type: String,
+    unique: true,
+    required: true,
+    validate: [validateUniqueName, 'this name is already in-use']
+  },
+  eloquaAccounts: 
+  {
+    type: Array,
+    default: []
+  },
+  sfdcAccounts: 
+  {
+    type: Array,
+    default: []
+  },
+  products: 
+  {
+    type: Array,
+    default: []
+  },
+  productTrials: 
+  {
+    type: Array,
+    default: []
+  },
+  users: 
+  {
+    type: Array,
+    default: []
+  }
+});
+
+
+mongoose.model('Company', CompanySchema);

@@ -1,0 +1,58 @@
+<div class="" data-ng-controller="CompanyCirclesController as vm">
+  <h1>Security Settings</h1>
+  <ol>
+    <li data-ng-repeat="circle in circles">
+      {{circle.name}} <br>
+     
+      <br>
+
+      <ul>
+        <li data-ng-repeat="child in circle.children">
+          {{child}} <a href=""> edit </a> <a href=""> delete </a>
+        </li>
+      </ul>
+
+      <button type="submit" class="btn btn-default" ng-click="vm.addCircle(circle.name)">add new</button>
+      <br/>
+      
+      containers {{circle.children}}<br>
+      decendants {{circle.decendants}}<br>
+      children {{circle.children}}<br>
+    </li> 
+  </ol>
+  
+ 
+     <form name="circleForm" class="form-horizontal col-md-6" role="form" data-ng-submit="vm.createAdvanced(circleForm.$valid)" novalidate>
+    <div class="form-group" ng-class="{ 'has-error' : submitted && articleForm.title.$invalid }">
+      <label mean-token="'create-cicle-name'" for="title" class="col-md-2 control-label">Name</label>
+      <div class="col-md-10">
+        <input name="name" type="text" class="form-control" data-ng-model="vm.circle.name" id="name" placeholder="Name" required>
+        <div ng-show="submitted && circleForm.name.$invalid" class="help-block">
+          <p ng-show="articleForm.title.$error.required">Name is required</p>
+        </div>
+      </div>
+    </div>
+
+    <input name="name" type="text" class="form-control" data-ng-model="vm.circle.circles" id="circles" required>
+
+    <div class="form-group">
+      <label mean-token="'children'" for="children" class="col-md-2 control-label">Children</label>
+      <div class="col-md-10">
+         <ui-select multiple ng-model="vm.children">
+            <ui-select-match placeholder="Select circles...">{{$item}}</ui-select-match>
+            <ui-select-choices repeat="circle in vm.availableCompanyProducts | filter:$select.search">
+              {{circle}}
+            </ui-select-choices>
+          </ui-select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-10">
+        <button mean-token="'edit-submit'" type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+  </form>
+
+
+</div>
+

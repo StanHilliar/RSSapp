@@ -1,0 +1,62 @@
+  <form id="user-add-form" class="row-fluid form-horizontal col-sm-6 well" name="addUserForm" ng-show="showForm">
+        AddUser
+      <div ng-repeat="error in userError" class="col-sm-12">
+        <div class="alert alert-danger animated fadeIn">{{error.msg}}</div>
+      </div>
+        <div>
+            <div class="form-group row">
+                <label for="user_firstname" class="col-sm-2 control-label">First Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="span2 form-control" data-ng-model="user.firstname" placeholder="First Name" id="user_firstname" required/>
+                </div>
+            </div>            
+            <div class="form-group row">
+                <label for="user_lastname" class="col-sm-2 control-label">Last name</label>
+                <div class="col-sm-10">
+                   <input type="text" class="span2 form-control" data-ng-model="user.lastname" placeholder="last name" id="user_lastname" required/>
+                </div>
+            </div>            
+            <div class="form-group row">
+                <label for="user_email" class="col-sm-2 control-label">Email Address</label>
+                <div class="col-sm-10">
+                   <input type="text" class="span2 form-control" data-ng-model="user.email" placeholder="Email Address" id="user_email" required/>
+                </div>
+            </div>            
+            <div class="form-group row">
+                <label for="user_username" class="col-sm-2 control-label">Username</label>
+                <div class="col-sm-10">
+                   <input type="text" class="span2 form-control" data-ng-model="user.username" placeholder="" id="user_username" required/>
+                </div>
+            </div>         
+            <div class="form-group row">
+                <label for="user_company" class="col-sm-2 control-label">Company</label>
+             	<select data-ng-model="user.companies" ng-multiple="true" multiple ng-options="option for option in formSettings.companyOptions" class="form-control" id="user_company" required>
+                        <option value="">-- Choose Company --</option>
+                    </select>
+            </div>     
+             <div class="form-group row">
+                <label for="user_roles" class="col-sm-2 control-label">Roles</label>
+                <div class="col-sm-10">
+                    <select data-ng-model="user.roles" ng-multiple="true" multiple ng-options="option for option in field['options']" class="form-control" id="user_roles" required>
+                        <option value="">-- Choose Role --</option>
+                    </select>
+                </div>
+            </div>   
+            <div class="form-group row">
+                <label for="user_password" class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-10">
+                    <input type="text" class="span2 form-control" data-ng-model="user.password" placeholder="Password" id="user_password" required/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="user_confirmPassword" class="col-sm-2 control-label">Confirm Password</label>
+                <div class="col-sm-10">
+                    <input type="text" class="span2 form-control" data-ng-model="user.confirmPassword" placeholder="confirm password" id="user_confirmPassword" required/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-offset-2 col-sm-4">
+            <button  class="btn" ng-click="add(addUserForm.$valid)">Add</button>
+            <input class="btn" type="button" value="Cancel" ng-click="showForm = false; user= {}"/>
+        </div>
+    </form>
