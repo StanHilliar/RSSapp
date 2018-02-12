@@ -1,0 +1,1 @@
+module.exports = require('./lib/amazing_eloqua_login');
