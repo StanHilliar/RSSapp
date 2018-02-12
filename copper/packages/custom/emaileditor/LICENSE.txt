@@ -1,0 +1,5 @@
+/* Copyright (C) Lead Management Teq Solutions AB - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Simon Eckhardt <simon@leadteq.com>, January 2017
+ */

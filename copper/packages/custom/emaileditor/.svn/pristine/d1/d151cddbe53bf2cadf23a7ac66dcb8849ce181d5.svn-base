@@ -1,0 +1,156 @@
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+    EmailModule = mongoose.model('EmailModule'),
+    async = require('async'),
+    config = require('meanio').loadConfig();
+    var url = require('url');
+    //var http = require('http');
+    //var sizeOf = require('image-size');
+    var imagesize = require('imagesize');
+    var request = require('request');
+    var size = require('request-image-size');
+    var http = require('follow-redirects').http;
+
+
+function expandUrl(shortUrl, cb) 
+{
+    //console.log('expandURL('+shortUrl+')');
+    var r = request(
+    {
+        url: shortUrl,
+        followRedirect: true,
+        followAllRedirects: true
+    }, function (e, response) 
+    {
+        console.log('result:');
+        if(e)
+        {
+            console.error(e);
+            return cb(e);
+        }
+        //console.log(r.uri);
+        //console.log(response.request.uri);
+        //console.log(response.headers);
+        //console.log(response.body);
+        var url = r.uri.href;
+
+        if(r.uri.port == '80')
+        {
+           url = url.replace(r.uri.host, r.uri.hostname);
+        }
+
+        return cb(null, url);
+    });
+}
+
+
+
+module.exports = function(MeanUser) {
+    return {
+        /**
+         * Find user by id
+         */
+        isAdvertismentBooked: function(req, res) 
+        {
+            console.log('isAdvertismentBooked');
+            var imgUrl = req.params.url;
+            //imgUrl = 'http://bn-01.adtomafusion.com/static/view/bbm.dagens_medicin.nyhetsbrev.dagliga_dm/dm_mail_rekt11';
+            console.log(imgUrl);
+        
+/*
+            http.request(
+            {
+                method: 'GET',
+                url: imgUrl,
+                maxRedirects: 10   // per request setting
+            }, function (res) 
+            {
+
+                console.log('result:');
+                console.log(res.request.uri);
+                console.log(res.headers);
+            });*/
+
+            expandUrl(imgUrl, function(err, url)
+            {
+                expandUrl(url, function(err, finalUrl)
+                {   
+                    size(finalUrl, function(err, dimensions, length) 
+                    {
+                        if(err != null)
+                        {
+                            return res.status(400).json(err);
+                        }
+                        else
+                        {
+                            console.log(err, dimensions, length);
+                            res.jsonp([dimensions]);  
+                        //res.status(200);
+                        }
+                    });
+                });
+            });
+
+
+            
+/*
+            var img = new Image();
+
+            img.onload = function()
+            {
+              var height = img.height;
+              var width = img.width;
+              console.log(height);
+              console.log(width);
+              res.status(200);
+              // code here to use the dimensions
+            }
+
+            img.src = url;*/
+
+
+            /*  
+            var request = http.get(imgUrl, function (response) 
+            {
+                console.log('cb');
+                imagesize(response, function (err, result) 
+                {
+                    console.log('cb1');
+                    console.log(err);
+                    console.log(result);
+                    // do something with result
+
+                    // we don't need more data
+                    request.abort();
+                    res.status(200);
+                });
+            });*/
+            
+            /*
+            var options = url.parse(imgUrl);
+            console.log(options);
+
+            http.get(options, function (response) 
+            {
+              var chunks = [];
+              response.on('data', function (chunk) 
+              {
+                chunks.push(chunk);
+              }).on('end', function() 
+              {
+                var buffer = Buffer.concat(chunks);
+                console.log(buffer);
+                console.log(sizeOf(buffer));
+                res.status(200);
+              });
+            });*/
+
+            //res.status(200);
+        }
+    };
+}
+

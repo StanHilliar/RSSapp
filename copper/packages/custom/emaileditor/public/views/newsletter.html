@@ -1,0 +1,243 @@
+<div class="" data-ng-controller="NewsletterEditController">
+	<div class="alert alert-danger alert-dismissible" role="alert" data-ng-repeat="error in errorMsgs">
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	  <strong>{{error.param}}</strong> {{error.msg}} 
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<h3>Newsletter Entity <span ng-if="loading.entity||loading.modules||loading.segments||loading.groups||loading.encoding||loading.circles" class="glyphicon glyphicon-refresh spinning"></span></h3>
+		</div>
+	</div>
+	<div class="row rowSpaced">
+		<div class="col-md-12">
+		 	<label for="">Name</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.name" name="">
+		</div>
+	</div>
+ 	<div class="row rowSpaced">
+		<div class="col-xs-6 col-md-5">
+		  	<label>available segments <span ng-if="loading.segments" class="glyphicon glyphicon-refresh spinning"></span></label>
+		  	<select multiple class="form-control" ng-model="available" ng-options="segment as segment.name for segment in availableSegments">
+			</select>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<br/>
+		  	<A href="#"  ng-click="moveAll(availableSegments, entity.segments)">
+		  		&nbsp;<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+		  	</A><br/>
+
+		  	<A href="#"  ng-click="moveItem(available[0], availableSegments, entity.segments)">
+		  		<span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+		  	</A><br/><br/>
+
+		  	<A href="#"  ng-click="moveItem(selected[0], entity.segments, availableSegments)">
+		  		<span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+		  	</A><br/>
+		  	
+			<A href="#"  ng-click="moveAll(entity.segments, availableSegments)">
+				&nbsp;<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+			</A><br/>
+		</div>
+		<div class="col-xs-6 col-md-6">
+		    <label>selected segments</label>
+		  	<select multiple class="form-control" ng-model="selected" ng-options="segment as segment.name for segment in entity.segments">
+			</select>
+			<!--{{entity.segments}}-->
+		</div>
+	</div>
+	<div class="row rowSpaced">
+		<div class="col-xs-6 col-md-5">
+		  	<label>available security circles <span ng-if="loading.circles" class="glyphicon glyphicon-refresh spinning"></span></label>
+		  	<select multiple class="form-control" ng-model="availableCircle" ng-options="circle for circle in availableSecurityCircles">
+			</select>
+		</div>
+		<div class="col-xs-6 col-md-1">
+			<br/>
+		  	<A href="#"  ng-click="moveAll(availableSecurityCircles, entity.circles)">
+		  		&nbsp;<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+		  	</A><br/>
+
+		  	<A href="#"  ng-click="moveItem(availableCircle[0], availableSecurityCircles, entity.circles)">
+		  		<span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+		  	</A><br/><br/>
+
+		  	<A href="#"  ng-click="moveItem(selectedCircle[0], entity.circles, availableSecurityCircles)">
+		  		<span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+		  	</A><br/>
+		  	
+			<A href="#"  ng-click="moveAll(entity.circles, availableSecurityCircles)">
+				&nbsp;<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+			</A><br/>
+		</div>
+		<div class="col-xs-6 col-md-6">
+		    <label>selected circles</label>
+		  	<select multiple class="form-control" ng-model="selectedCircle" ng-options="circle for circle in entity.circles">
+			</select>
+			<!--{{entity.circles}}-->
+		</div>
+	</div> 	
+	<div class="row rowSpaced">
+		<div class="col-xs-6 col-md-5">
+		  	<label>emailGroup  <!--{{entity.eloquaEmailGroup}}--> <span ng-if="loading.groups" class="glyphicon glyphicon-refresh spinning"></span></label>
+		  	<select class="form-control" ng-model="entity.eloquaEmailGroup" ng-options="group.id as group.name for group in availableSEmailGroups">
+			</select>
+		</div>
+
+		<div class="col-xs-6 col-md-5">
+			<label for="">bounceback address</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.bounceBackAddress" name="" readonly disabled>
+		</div>
+	</div>
+	<div class="row rowSpaced">
+		<div class="col-xs-6 col-md-5">
+
+		  	<label>Encoding   <!--{{entity.eloquaEmailEncoding}}--><span ng-if="loading.encoding" class="glyphicon glyphicon-refresh spinning"></span></label>
+		  	<select class="form-control" ng-model="entity.eloquaEmailEncoding" ng-options="encoding.id as encoding.name for encoding in availableEmailEncodings">
+			</select>
+		</div>
+ </div>
+ <div class="row rowSpaced">
+		<div class="col-xs-6 col-md-5">
+		  	<label for="eloquaHeader">emailHeader  <!--{{entity.eloquaHeader}}--><span ng-if="loading.headers" class="glyphicon glyphicon-refresh spinning"></span></label>
+			<input type="checkbox" ng-model="entity.setEloquaHeaderManually" name="setEloquaHeaderManually"> <label for="setEloquaHeaderManually">&nbsp;|&nbsp;set manually&nbsp;</label>
+		  	<select class="form-control" name="eloquaHeader" ng-model="entity.eloquaHeader" ng-options="header.id as header.name for header in availableEmailHeaders" ng-disabled="!entity.setEloquaHeaderManually">
+			</select>
+		</div>
+		<div class="col-xs-6 col-md-5">
+		  	<label for="eloquaFooter">emailFooter  <!--{{entity.eloquaFooter}}--><span ng-if="loading.footers" class="glyphicon glyphicon-refresh spinning"></span></label>
+			<input type="checkbox" ng-model="entity.setEloquaFooterManually" name="setEloquaFooterManually"> <label for="setEloquaFooterManually">&nbsp;|&nbsp;set manually&nbsp;</label>
+		  	<select class="form-control" name="eloquaFooter" ng-model="entity.eloquaFooter" ng-options="footer.id as footer.name for footer in availableEmailFooters" ng-disabled="!entity.setEloquaFooterManually">
+			</select>
+		</div>	
+
+	</div>
+	<div class="row rowSpaced">
+		<div class="col-xs-6 col-md-5">
+			<label for="">reply to Name</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.replyToName" name="" readonly disabled>
+		</div>
+		
+		<div class="col-xs-6 col-md-5">
+			<label for="">reply to Email</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.replyToEmail" name="" readonly disabled>
+		</div>
+	</div>	
+
+	<div class="row rowSpaced">
+		<div class="col-xs-6 col-md-5">
+	 		<label for="">from Address</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.fromAddress" name="">
+		</div>
+		<div class="col-xs-6 col-md-5">
+			<label for="">sender Name</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.senderName" name="">
+		</div>	
+
+	</div>
+    <!--
+	<div class="row rowSpaced">
+		<div class="col-md-12">
+		 	<label for="">eloquaCampaignFolder</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.eloquaCampaignFolder">
+			<br>
+			<label for="">eloquaFolder</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.eloquaFolder">
+			<br>
+			<label for="">eloquaFooter</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.eloquaFooter">
+			<br>
+			<label for="">eloquaHeader</label>
+			<input type="text" class="form-control" placeholder="" ng-model="entity.eloquaHeader">
+		</div>
+	</div>-->
+	<input type="hidden" ng-model="entity.eloquaCampaignFolder">
+	<input type="hidden" ng-model="entity.eloquaFolder">
+	<input type="hidden" ng-model="entity.eloquaFooter">
+	<input type="hidden" ng-model="entity.eloquaHeader">
+
+	<div class="row rowSpaced bigEditor">
+		<div class="col-md-12">
+			<label>template</label><br/><br/>
+			<div class="alert alert-danger alert-dismissible" role="alert" data-ng-repeat="error in templateErrorMsgs">
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  <strong>{{error.param}}</strong> {{error.msg}} 
+			</div>
+			<div ui-ace="{
+			  useWrapMode : true,
+			  showGutter: true,
+			  theme:'idle_fingers',
+			  mode: 'html',
+			  firstLineNumber: 1,
+			  vscroll: true
+			      }" ng-model="template">
+			</div>
+			<br/>
+			<button ng-click="processTemplate()"  class="btn btn-warning">
+	    		processTemplate   
+			</button>
+		</div>
+	</div>
+	<div class="row rowSpaced" data-ng-repeat="module in entity.modules" ng-if="!module.placeholderType||module.placeholderType=='MODULE'">	
+		<div class="col-md-8" >	
+			<label for="module_$index">Module {{module.moduleIdentifier}} <span ng-if="loading.modules" class="glyphicon glyphicon-refresh spinning"></span></label>
+			<select class="form-control" ng-model="module._id" ng-options="element._id as element.name for element in availableModules" name="module_$index"></select>
+		</div>
+		<div class="col-md-4">
+			<br/>	
+			<label>
+		      <input type="checkbox" ng-model="module.removeable"> Can be deactivated/removed?
+		    </label>
+		</div>
+	</div>
+	<div class="row rowSpaced" ng-show="hasDropzone">
+		<div class="col-xs-6 col-md-5">
+		  	<label>available modules</label>
+		  	<select multiple class="form-control" ng-model="selectedAvailableModules" ng-options="module as module.name for module in availableDropzoneModules">
+			</select>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<br/>
+		  	<A href="#"  ng-click="moveAll(availableDropzoneModules, selectedDropzoneModules)">
+		  		&nbsp;<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+		  	</A><br/>
+
+		  	<A href="#"  ng-click="moveItem(selectedAvailableModules[0], availableDropzoneModules, selectedDropzoneModules)">
+		  		<span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+		  	</A><br/><br/>
+
+		  	<A href="#"  ng-click="moveItem(selecteddropZoneModules[0], selectedDropzoneModules, availableDropzoneModules)">
+		  		<span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+		  	</A><br/>
+		  	
+			<A href="#"  ng-click="moveAll(selectedDropzoneModules, availableDropzoneModules)">
+				&nbsp;<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+			</A><br/>
+		</div>
+		<div class="col-xs-6 col-md-6">
+		    <label>selected modules</label>
+		  	<select multiple class="form-control" ng-model="selecteddropZoneModules" ng-options="module as module.name for module in selectedDropzoneModules">
+			</select>
+		</div>
+		
+	</div>
+	<div class="row rowSpaced">
+		<div class="col-md-10">
+			<br/>
+			<button data-ng-if="(!newsletterExsists && !saveInProgress) && (errorMsgs.length == 0) && !(loading.entity||loading.modules||loading.segments||loading.groups||loading.encoding||loading.circles)"  ng-click="save()"  class="btn btn-warning">
+    			save   
+			</button>
+			<button data-ng-if="(newsletterExsists && !saveInProgress)  && (errorMsgs.length == 0) && !(loading.entity||loading.modules||loading.segments||loading.groups||loading.encoding||loading.circles)"  ng-click="update()"  class="btn btn-warning">
+    			Update   
+			</button>
+			<button data-ng-if="saveInProgress || (loading.entity||loading.modules||loading.segments||loading.groups||loading.encoding||loading.circles) " class="btn btn-warning">
+    			<span class="glyphicon glyphicon-refresh spinning"></span> Loading...    
+			</button>
+			<button data-ng-if="errorMsgs.length != 0" disabled>
+				save/update
+			</button>
+
+			<a ng-if="entity._id" href="/emaileditor/email/create/{{entity._id}}">create email</a
+		</div>
+	</div>
+</div>
+
